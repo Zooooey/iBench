@@ -39,19 +39,21 @@ int main(int argc, const char** argv) {
 	uint32_t maxThreads = omp_get_num_procs();
 	//Usage: "./cpu <duration in sec>"
 	if (argc < 2) { 
-		printf("Usage: ./cpu <duration in sec>\n"); 
+		//printf("Usage: ./cpu <duration in sec>\n"); 
+		printf("Usage: ./cpu <threads>\n"); 
 		exit(0);
 	}
-	uint64_t nsPerRun = NS_PER_S*atoi(argv[1])/maxThreads;  // ns
-
-	for (uint32_t threads = 1; threads <= maxThreads; threads++) {
+	//uint64_t nsPerRun = NS_PER_S*atoi(argv[1])/maxThreads;  // ns
+	uint32_t threads = atoi(argv[1]);
+	//for (uint32_t threads = 1; threads <= maxThreads; threads++) {
 		printf("Running with %d threads\n", threads);
 		omp_set_num_threads(threads);
 		//uint64_t endNs = pi*getNs() + nsPerRun;
-		uint64_t endNs = getNs() + nsPerRun;
+		//uint64_t endNs = getNs() + nsPerRun;
 #pragma omp parallel
-		while (getNs() < endNs);
-	}
+		//while (getNs() < endNs);
+		while (1);
+	//}
 	return 0;
 }
 
