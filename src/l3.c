@@ -93,30 +93,28 @@ int main(int argc, char **argv) {
 	int CACHE_SIZE = cache_size(); 
 	printf("Detected L3 cache size: %d bytes\n", CACHE_SIZE);
 
-
-	/*Usage: ./l3 <duration in sec>*/
 	if (argc < 2) { 
-		printf("Usage: ./l3 <duration in sec>\n"); 
+		printf("Usage: ./l3 <fraction>\n"); 
 		exit(0); 
 	}	
+    float fraction = atof(argv[1]);
+    CACHE_SIZE = CACHE_SIZE * fraction;
+	printf("With frac %.2f, CACHE_SIZE:%d bytes\n",fraction, CACHE_SIZE);
 	block = (char*)mmap(NULL, CACHE_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
 	if (block == (char *) -1) {
 		perror("error: cannot mmap");
 		exit(1);
 	};
 	
-	int usr_timer = atoi(argv[1]);
-	double time_spent = 0.0; 
-  	clock_t begin, end;
+	//int usr_timer = atoi(argv[1]);
+	//double time_spent = 0.0; 
+  	//clock_t begin, end;
 
 
-	while (time_spent < usr_timer) {
-  		begin = clock();
+	while (1) {
 		memcpy(block, block+CACHE_SIZE/2, CACHE_SIZE/2);
 		// note: replaced original throttling sleep with yielding that gives chance ther workloads to run
 		sched_yield(); // sleep((float)(usr_timer-time_spent)/usr_timer);
-		end = clock();
-  		time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
 	}
 	return 0;
 }

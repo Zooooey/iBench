@@ -77,26 +77,31 @@ int cache_size_kb(void) {
 }
 
 int main(int argc, char **argv) {
-	timespec sleepValue = {0};
+	//timespec sleepValue = {0};
+	if (argc < 2) { 
+		printf("Usage: ./l2 <L2 cache fraction>\n"); 
+		exit(0); 
+	}	
 
 	char* volatile block;
 	int CACHE_SIZE = cache_size_kb(); 
 	printf("L2 cache size: %dKB\n", CACHE_SIZE); 
+    float frac = atof(argv[1]);
+	printf("current frac: %.2f\n", frac); 
+    CACHE_SIZE = CACHE_SIZE * frac ; 
+	printf("alloc size: %dKB\n", CACHE_SIZE); 
 	block = (char*)mmap(NULL, CACHE_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, 0, 0);
 
 
 	/*Usage: ./l2 <duration in sec>*/
-	if (argc < 2) { 
-		printf("Usage: ./l2 <duration in sec>\n"); 
-		exit(0); 
-	}	
-	unsigned long int usr_timer = getNs() + NS_PER_S*atoi(argv[1]);
+	//unsigned long int usr_timer = getNs() + NS_PER_S*atoi(argv[1]);
 
 
-	while (getNs() < usr_timer) {
+	//while (getNs() < usr_timer) {
+	while (true) {
 		memcpy(block, block+CACHE_SIZE/2, CACHE_SIZE/2);
-		sleepValue.tv_nsec = (usr_timer-getNs())/usr_timer;
-		nanosleep(&sleepValue, NULL);
+		//sleepValue.tv_nsec = (usr_timer-getNs())/usr_timer;
+		//nanosleep(&sleepValue, NULL);
 	}
 	return 0;
 }

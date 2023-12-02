@@ -28,6 +28,7 @@
 #include <time.h>
 #include <math.h>
 #include <float.h>
+#include <omp.h>
 
 #ifndef N
 #   define N    2000000
@@ -64,14 +65,14 @@ int main (int argc, char **argv) {
 	double scalar = 3.0;
 	/*Usage: ./memBw <duration in sec>*/
 	if (argc < 2) { 
-		printf("Usage: ./memBw <duration in sec>\n"); 
+		printf("Usage: ./memBw <threads>\n"); 
 		exit(0);
 	}
-	unsigned int usr_timer = atoi(argv[1]);
-	double time_spent = 0.0; 
-	while (time_spent<usr_timer) {
+	unsigned int threads = atoi(argv[1]);
+	omp_set_num_threads(threads);	
+	printf("Start to interferencing memBw! with %d threads \n", threads);
+	while (1) {
 		double *mid=bwData+(bwStreamSize/2);
-		clock_t begin = clock(); 
 		#pragma omp parallel for 
 		for (int i=0; i<bwStreamSize/2; i++) {
 			bwData[i]= scalar*mid[i];
@@ -80,8 +81,6 @@ int main (int argc, char **argv) {
 		for (int i=0; i<bwStreamSize/2; i++) {
 			mid[i]= scalar*bwData[i];
 		}
-		clock_t end = clock(); 
-  		time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
 	}
 	return 0;
 }

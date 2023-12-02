@@ -4,7 +4,7 @@ src/memCap: src/memCap.c
 	g++ -o src/memCap src/memCap.c
 
 src/memBw: src/memBw.c
-	g++ -o src/memBw src/memBw.c
+	g++ -o src/memBw src/memBw.c -fopenmp
 
 src/cpu: src/cpu.cpp
 	g++ -fopenmp -o src/cpu src/cpu.cpp -lpthread -lgomp
